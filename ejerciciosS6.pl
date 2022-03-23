@@ -52,3 +52,27 @@ invertir([],[]).
 invertir([X|T1],L2) :-
     invertir(T1,L3),
     append(L3,[X],L2).
+
+%Divide una lista segun umbral
+% Si la lista esta vacia, si importar el umbral , el resultado es lista
+% vacia
+% Divide la lista en cabeza cola.
+% Si la cabeza es mayor al umbral, se hace la llamada recursiva para
+% recorrer la cola con una lista nueva de mayores, se genera una lista
+% nueva de mayores que contiene la cabeza de la lista, junto con la
+% lista de mayores
+% Si al contrario, la cabeza es menor que el umbral, se aplica la misma
+% lógica, pero se va generando la nueva lista con la lista de menores
+
+%partir(L,U,Ma,Me).
+
+partir([],_,[],[]).
+partir([H|T],U,Ma,Me) :-
+    H > U,
+    partir(T,U,Ma2,Me),
+    append(Ma2,[H],Ma).
+
+partir([H|T],U,Ma,Me) :-
+    H < U,
+    partir(T,U,Ma,Me2),
+    append(Me2,[H],Me).
