@@ -1,0 +1,5 @@
+insertar(E,[],[E]). /* caso para cuando se va a insertar al final de la lista, cuando la lista es vacía es porque tiene que insertar al final*/
+insertar(E,[H|T],[E|[H|T]]):- E < H. /* cuando el elemento a insertar es menor que la cabeza de la lista actual, es porque ya paso todos los menores a el y es tiemp de insertar. Es en ese momento en donde el R de la llamada anterior se unifica con [E|[H|T]] --> la lista actual con una nueva cabeza, el elemento a insertar */
+insertar(E,[H|T],[H|R]):- insertar(E,T,R). /* hace la llamada recursiva con la cola y con el R el cual no tiene valor todavía hasta que se inserte. Una vez que se encuentra el valor para R, se pueden resolver la union de todas las cabezas que se dejaron pendientes en la llamada recursiva (ver tercer parámetro de esta regla) */
+
+/*EL TRUCO ESTABA EN UBICAR BIEN LA(S) PREGUNTA(S) DE PARADA Y DE; MUY IMPORTANTE; ENVIAR SIEMPRE CUANDO HACEMOS LA LLAMADA RECURSIVA LA VARIABLE A LA CUAL DEBEMOS UNIFICARLE UN RESULTADO VACÍA POR COMPLETO*/
