@@ -2,28 +2,36 @@
 % 1 parte
 % Planificacion de horarios
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %semestre(numero semestre, curso asignado y horas del curso)
-semestre(1, curso(4)). %%semestre 1 tiene un curso de 4 horas
-semestre(1, curso(2)). %%semestre 1 tiene un curso de 2 horas
-semestre(2, curso(4)).
-semestre(3, curso(4)).
-semestre(4, curso(4)).
-semestre(4, curso(2)).
-semestre(5, curso(4)).
-semestre(6, curso(4)).
-semestre(6, curso(2)).
-semestre(7, curso(4)).
+semestre(1, curso(4,intro)). %%semestre 1 tiene un curso de 4 horas
+semestre(1, curso(2,taller)). %%semestre 1 tiene un curso de 2 horas
+semestre(2, curso(4,estructuras)).
+semestre(3, curso(4,bases1)).
+semestre(4, curso(4,lenguajes)).
+semestre(4, curso(2,bases2)).
+semestre(5, curso(4,compiladores)).
+semestre(6, curso(4,qa)).
+semestre(6, curso(2,os)).
+semestre(7, curso(4,ia)).
 
 %Semestres pares e impares
-tipo(pares,X,C):-
-    semestre(X,C),
-    N is X mod 2,
+tipoA(pares,S,C):-
+    semestre(S,C),
+    N is S mod 2,
     N = 0.
-tipo(impares,X,C):-
-    semestre(X,C),
-    N is X mod 2,
+tipoA(impares,S,C):-
+    semestre(S,C),
+    N is S mod 2,
     N > 0.
-
+%Funcion general para llamar semestres pares o impares
+%los devuelve en una lista [Semestre, Curso]
+tipo(T,L):-
+    T = pares,
+    findall([S,C],tipoA(pares,S,C),L).
+tipo(T,L):-
+    T = impares,
+    findall([S,C],tipoA(impares,S,C),L).
 
 %bloque disponible horario(mañana o tarde, horas)
 bloque(m,2).
@@ -31,11 +39,42 @@ bloque(m,4).
 bloque(t,2).
 bloque(t,4).
 
-%Horarios
-%Tipo de semestre
-%horario(Pares_Impares,Bloque).
+%dias disponibles
+dia(lunes).
+dia(martes).
+dia(miercoles).
+dia(jueves).
+dia(viernes).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Acomoda un curso en un dia especifico y devuelve un posible bloque
+acomodar(D,C,B):-
+    dia(D),
+    C = curso(H,_),%%curso con H horas que coincidan con las del bloque disponible
+    B = bloque(m,H).
+
+acomodar(D,C,B):-
+    dia(D),
+    C = curso(H,_),
+    B = bloque(t,H).
+
+%Horarios
+%horario(Pares_Impares,Dias,Bloque).
+horario(Tipo,Curso,Dia,Bloque):-
+    tipo(Tipo,L),%lista con todos los cursos de ese tipo(pares o impares)
+    %%sacar el dia especifico
+    dia(Dia),
+    hAux(L,Curso,Dia,Bloque).
+
+% Como se reciben los cursos en una lista, [semestre, curso(Horas)] se
+% recorre la lista hasta llegar al curso en si
+hAux([H|_],Curso,Dia,Bloque):-
+    H = [_,Curso],%H es algo de tipo curso
+    acomodar(Dia,Curso,Bloque).
+
+hAux([_|T],Curso,Dia,Bloque):-
+    hAux(T,Curso,Dia,Bloque).%Si no es algo de tipo curso, hace recursion en la lista
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 2 parte
 % Identificacion de personas
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
